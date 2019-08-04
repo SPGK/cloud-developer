@@ -37,7 +37,36 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     res.send("try GET /filteredimage?image_url={{}}")
   } );
   
+  
+  //localhost:{{PORT}}/filteredimage?image_url=https://timedotcom.files.wordpress.com/2019/03/kitten-report.jpg
+  app.get( "/filteredimage/", async ( req, res ) => {
 
+    let{ image_url } = req.query;
+    if(!image_url){
+      return res.status(400)
+              .send("Image url is missing");
+      
+    }
+
+    var path = require('path');
+    const tmpDirectory = '/util/tmp/';
+    
+    filterImageFromURL(image_url);
+    //get filtered path
+    /*let filteredpath = "";
+    if(filteredpath===""){
+      return res.status(442)
+              .send("Unable to process request");
+    }*/
+
+    //res.sendFile(path.join(__dirname, '/util/tmp/', 'filtered.40.jpg'));
+
+           
+            res.sendFile(path.join(__dirname, '/util/tmp/', 'filtered.40.jpg'));
+            deleteLocalFiles(path.join(__dirname, '/util/tmp/', 'filtered.*'));
+            
+  } );
+  
   // Start the Server
   app.listen( port, () => {
       console.log( `server running http://localhost:${ port }` );
