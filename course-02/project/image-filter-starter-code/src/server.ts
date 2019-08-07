@@ -1,6 +1,9 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import {filterImageFromURL, deleteLocalFiles} from './util/util';
+import { readdirSync, statSync, existsSync } from "fs";
+import { any } from 'bluebird';
+
 
 (async () => {
 
@@ -49,21 +52,36 @@ import {filterImageFromURL, deleteLocalFiles} from './util/util';
     }
 
     var path = require('path');
-    const tmpDirectory = '/util/tmp/';
+    const fs = require('fs');
+
+    //Directory to save file
+    const tmpDirectory = path.join(__dirname, '/util/tmp/');
+
+    var fileList : string[] ;
     
-    filterImageFromURL(image_url);
-    //get filtered path
-    /*let filteredpath = "";
-    if(filteredpath===""){
-      return res.status(442)
-              .send("Unable to process request");
-    }*/
+    
+    //save image in request url to local
+    //filterImageFromURL(image_url);
+    async function getMyImage() {
+      try {
+        let myImg = await filterImageFromURL(image_url); 
+        console.log('myImg', myImg);
+        //send image absolute path
+        res.sendFile(myImg);
+        //console.log('Econtrol is here');
+        
+      } catch(e) {
+        //catch any errors caused 
+        console.log('Error caught');
+      }
+    };
 
-    //res.sendFile(path.join(__dirname, '/util/tmp/', 'filtered.40.jpg'));
+    getMyImage();
 
-           
-            res.sendFile(path.join(__dirname, '/util/tmp/', 'filtered.40.jpg'));
-            deleteLocalFiles(path.join(__dirname, '/util/tmp/', 'filtered.*'));
+    //Get list of files from the directory
+   
+    //Delete files in the directory
+
             
   } );
   
